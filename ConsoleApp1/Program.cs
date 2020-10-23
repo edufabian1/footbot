@@ -1,90 +1,91 @@
-﻿using OpenQA.Selenium;
+﻿using Newtonsoft.Json.Serialization;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
+using System.Linq;
+using System.Net.NetworkInformation;
 using System.Threading;
 
 namespace ConsoleApp1
 {
+
     class Program
     {
+        static string _urlOption = "https://la.footballteamgame.com/";
+        
         static void Main(string[] args)
         {
-            string urlOption, seleccion, password, username;
+            User user = new User();
+            Menu(user);
+            
+            SeleniumServices seleniumServices = new SeleniumServices(@"C:\chromedriver");
 
-            Console.WriteLine("Usuario:");
-            username = Console.ReadLine();
-            Console.WriteLine("Contraseña:");
-            password = Console.ReadLine();
-            Console.WriteLine("Cantidad:");
-            int count = int.Parse(Console.ReadLine());
-            Console.WriteLine("Seleccionar:");            
-            Console.WriteLine("1 - Food:");
-            Console.WriteLine("2 - Training: resistencia");
-            seleccion = Console.ReadLine();
-
-            switch (seleccion)
-            {
-                case "1":
-                    urlOption = "https://la.footballteamgame.com/food";
-                    break;
-                case "2":
-                    urlOption = "https://la.footballteamgame.com/training";
-                    break;
-                default:
-                    return;
-            }
-
-
-            IWebDriver driver = new ChromeDriver(@"C:\chromedriver");
-
-            driver.Navigate().GoToUrl("https://la.footballteamgame.com");
-
-            IWebElement lnkLogin = driver.FindElement(By.CssSelector("button[class='btn btn-lg openLoginModal']"));
-            lnkLogin.Click();
-
-            IWebElement signIn = driver.FindElement(By.Id("modal-login-tab"));
-            signIn.Click();
-
-            var txtUsername = driver.FindElement(By.CssSelector("input[type='email']")); 
-            var txtPassword = driver.FindElement(By.CssSelector("input[type='password']"));
-
-            txtUsername.SendKeys(username);
-            txtPassword.SendKeys(password);
-
-            IWebElement btnLogin = driver.FindElement(By.Id("btn-login"));
-            btnLogin.Click();
-
+            seleniumServices.Login(user.Username, user.Password);
             Thread.Sleep(5000);
-            driver.Navigate().GoToUrl(urlOption);
 
-            switch (seleccion)
+            switch (user.PlayerAction)
             {
-                case "1":
+                case PlayerAction.food:
                     do
                     {
+                        seleniumServices.Driver.Navigate().GoToUrl(_urlOption + user.PlayerAction.ToString());
                         Thread.Sleep(5000);
-                        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                        IJavaScriptExecutor js = (IJavaScriptExecutor)seleniumServices.Driver;
                         js.ExecuteScript("document.getElementsByClassName('btn btn-lg btn-primary')[0].click()");
 
                         Thread.Sleep(1000 * 60 * 7);
-                        driver.Navigate().Refresh();
-                        count -= 1;
-                    } while (count != 0);
+                        seleniumServices.Driver.Navigate().Refresh();
+                        user.Count -= 1;
+                    } while (user.Count != 0);
                     break;
-                case "2":
+                case PlayerAction.training:
                     do
                     {
-                        Thread.Sleep(5000);
-                        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+                        //Los entrenamientos tienen un refresh menor de 15 por lo que no es necesario actualizar pagina y se puede reducir tiempo de sleep ya que se encadenan en loop
+                        seleniumServices.Driver.Navigate().GoToUrl(_urlOption + user.PlayerAction.ToString());
+                        Thread.Sleep(3000);
+                        IJavaScriptExecutor js = (IJavaScriptExecutor)seleniumServices.Driver;
                         js.ExecuteScript("document.getElementsByClassName('btn btn-primary tile-box__btn pulse-in-tutorial')[3].click()");
                         Thread.Sleep(1000 * 10);
-                        driver.Navigate().Refresh();
-                        count -= 1;
-                    } while (count != 0);
+                        user.Count -= 1;
+                    } while (user.Count != 0);
                     break;
                 default:
                     break;
             }       
+        }
+
+        static void Menu(User user)
+        {
+            user.Username = RequireData("Usuario");
+            user.Password = RequireData("Contraseña");
+            user.Count = int.Parse(RequireData("Cantidad"));
+
+            string data = string.Empty;
+            string[] playerActions = { "food", "training" };
+            do
+            {
+                Console.WriteLine("Seleccionar:");
+                foreach (string item in playerActions)
+                    Console.WriteLine(item);
+
+                data = RequireData("Escribi bien y textual no seas choto");
+                if (playerActions.Contains(data))
+                    user.PlayerAction = (PlayerAction)Enum.Parse(typeof(PlayerAction), data);
+
+            } while (!playerActions.Contains(data));
+        }
+        static string RequireData(string label)
+        {
+            string result;
+            bool isOk;
+            do
+            {
+                Console.WriteLine($"Ingresar {label}:");
+                result = Console.ReadLine();
+                isOk = !string.IsNullOrEmpty(result.Trim()) ? true : false;
+            } while (!isOk);
+            return result;
         }
     }
 }
