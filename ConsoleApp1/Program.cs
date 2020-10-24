@@ -2,57 +2,63 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 namespace ConsoleApp1
 {
 
     class Program
-    {
-        static string _urlOption = "https://la.footballteamgame.com/";
-        
+    {   
+        static IDictionary<int, string> Foods = new Dictionary<int, string> ()
+        {
+            { 1, "SMOOTHIE DE VERDURAS" },
+            { 2, "ROLLO DE PLÁTANO" },
+            { 3, "CARNE ASADA DE MAMÁ" },
+            { 4, "LICUADO DE PROTEÍNAS" },
+            { 5, "POLLO Y ARROZ" },
+            { 6, "EMPAREDADO DE MERIENDA" }
+        };
+
+        static IDictionary<int, string> Trainings = new Dictionary<int, string>()
+        {
+            { 1, "ENTRENAMIENTO BASICO (no usar) (La pagina esta trabajando en esto)" },
+            { 2, "OFENSIVA" },
+            { 3, "DEFENSIVA" },
+            { 4, "CREACIÓN DE JUEGO" },
+            { 5, "RESISTENCIA" },
+            { 6, "LECTURA" },
+            { 7, "PRESIÓN" },
+            { 8, "BALÓN PARADO" },
+            { 9, "EFICACIA" }
+        };
+
         static void Main(string[] args)
         {
             User user = new User();
             Menu(user);
             
-            SeleniumServices seleniumServices = new SeleniumServices(@"C:\chromedriver");
+            SeleniumServices seleniumServices = new SeleniumServices(@"C:\chromedriver", "https://la.footballteamgame.com/");
 
-            seleniumServices.Login(user.Username, user.Password);
+            seleniumServices.LogIn(user);
             Thread.Sleep(5000);
 
             switch (user.PlayerAction)
             {
-                case PlayerAction.food:
-                    do
-                    {
-                        seleniumServices.Driver.Navigate().GoToUrl(_urlOption + user.PlayerAction.ToString());
-                        Thread.Sleep(5000);
-                        IJavaScriptExecutor js = (IJavaScriptExecutor)seleniumServices.Driver;
-                        js.ExecuteScript("document.getElementsByClassName('btn btn-lg btn-primary')[0].click()");
-
-                        Thread.Sleep(1000 * 60 * 7);
-                        seleniumServices.Driver.Navigate().Refresh();
-                        user.Count -= 1;
-                    } while (user.Count != 0);
+                case PlayerActionEnum.food:
+                    seleniumServices.Eat(user, user.Food.Name);
                     break;
-                case PlayerAction.training:
-                    do
-                    {
-                        //Los entrenamientos tienen un refresh menor de 15 por lo que no es necesario actualizar pagina y se puede reducir tiempo de sleep ya que se encadenan en loop
-                        seleniumServices.Driver.Navigate().GoToUrl(_urlOption + user.PlayerAction.ToString());
-                        Thread.Sleep(3000);
-                        IJavaScriptExecutor js = (IJavaScriptExecutor)seleniumServices.Driver;
-                        js.ExecuteScript("document.getElementsByClassName('btn btn-primary tile-box__btn pulse-in-tutorial')[3].click()");
-                        Thread.Sleep(1000 * 10);
-                        user.Count -= 1;
-                    } while (user.Count != 0);
+                case PlayerActionEnum.training:
+                    seleniumServices.Train(user, user.Training.Name);
                     break;
                 default:
                     break;
-            }       
+            }
+
+            seleniumServices.LogOut();
         }
 
         static void Menu(User user)
@@ -62,6 +68,7 @@ namespace ConsoleApp1
             user.Count = int.Parse(RequireData("Cantidad"));
 
             string data = string.Empty;
+            bool state = false;
             string[] playerActions = { "food", "training" };
             do
             {
@@ -69,11 +76,40 @@ namespace ConsoleApp1
                 foreach (string item in playerActions)
                     Console.WriteLine(item);
 
-                data = RequireData("Escribi bien y textual no seas choto");
+                data = RequireData("Escribi bien y textual la accion");
                 if (playerActions.Contains(data))
-                    user.PlayerAction = (PlayerAction)Enum.Parse(typeof(PlayerAction), data);
+                    user.PlayerAction = (PlayerActionEnum)Enum.Parse(typeof(PlayerActionEnum), data);
 
-            } while (!playerActions.Contains(data));
+                if (user.PlayerAction == PlayerActionEnum.food)
+                {
+                    foreach (KeyValuePair<int, string> food in Foods)
+                        Console.WriteLine("{0} - {1}", food.Key, food.Value);
+
+                    data = RequireData("Escribi bien y textual la accion");
+                    if (Foods.ContainsKey(int.Parse(data)))
+                    {
+                        user.Food.Name = Foods[int.Parse(data)];
+                        user.Food.Cost = int.Parse(RequireData("Cuantos minutos demora la actividad?"));
+                        user.Food.CostMeasure = CostMeasureEnum.min;
+                        state = true;
+                    }                        
+                }
+                else if (user.PlayerAction == PlayerActionEnum.training)
+                {
+                    foreach (KeyValuePair<int, string> training in Trainings)
+                        Console.WriteLine("{0} - {1}", training.Key, training.Value);
+
+                    data = RequireData("Escribi bien y textual la accion");
+                    if (Trainings.ContainsKey(int.Parse(data)))
+                    {
+                        user.Training.Name = Trainings[int.Parse(data)];
+                        user.Training.Cost = int.Parse(RequireData("Cuantos minutos demora la actividad?"));
+                        user.Training.CostMeasure = CostMeasureEnum.seconds;
+                        state = true;
+                    }
+                }
+                    
+            } while (!state);
         }
         static string RequireData(string label)
         {
