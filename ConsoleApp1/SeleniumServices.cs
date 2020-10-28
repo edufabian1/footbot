@@ -85,7 +85,7 @@ namespace ConsoleApp1
             }
         }
 
-        //TODO: Accion de comer por bot https://la.footballteamgame.com/training
+        //TODO: Accion de comer por bot https://la.footballteamgame.com/work
         public void Train(User user, string training)
         {
             List<Training> trainings = new List<Training>();
@@ -144,6 +144,36 @@ namespace ConsoleApp1
 
                 user.Count -= 1;
             } while (user.Count != 0);            
+        }
+
+        //TODO: Accion de comer por bot https://la.footballteamgame.com/work
+        public void Job(User user, string job)
+        {
+            List<Job> jobs = new List<Job>();
+
+            Driver.Navigate().GoToUrl(Url + user.PlayerAction.ToString());
+            Thread.Sleep(5000);
+
+            ReadOnlyCollection<IWebElement> elements = Driver.FindElements(By.ClassName("tile-box--header"));
+
+            foreach (var element in elements)
+                jobs.Add(new Job { Name = element.Text });
+
+            int index = jobs.FindIndex(element => element.Name.ToUpper().Equals(job.ToUpper()));
+
+            do
+            {
+                Thread.Sleep(5000);
+
+                IJavaScriptExecutor js = (IJavaScriptExecutor)Driver;
+                js.ExecuteScript($"document.getElementsByClassName('btn btn-lg btn-primary')[{index}].click()");
+
+                var value = 1000 * 60 * user.Job.CostTime;
+                Thread.Sleep((int) value);
+                Driver.Navigate().Refresh();
+
+                user.Count -= 1;
+            } while (user.Count != 0);
         }
     }
 }

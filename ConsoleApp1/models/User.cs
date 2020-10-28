@@ -10,11 +10,13 @@ namespace ConsoleApp1
         public int Count { get; set; }
         public Food Food { get; set; }
         public Training Training { get; set; }
+        public Job Job { get; set; }
 
         public User()
         {
             Food = new Food();
             Training = new Training();
+            Job = new Job();
         }
     }
 }

@@ -3,7 +3,8 @@
     public enum PlayerActionEnum
     {
         food = 1,
-        training
+        training,
+        work
     }
 
     public enum CostMeasureEnum

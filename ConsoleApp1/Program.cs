@@ -36,6 +36,19 @@ namespace ConsoleApp1
             { 9, "EFICACIA" }
         };
 
+        static IDictionary<int, string> Jobs = new Dictionary<int, string>()
+        {
+            { 1, "UTILERO" },
+            { 2, "MASCOTA DEL EQUIPO" },
+            { 3, "EXPERTOS DEL ESTUDIO" },
+            { 4, "AGUADOR" },
+            { 5, "ENTRENADOR DE LAS FUERZAS BÁSICAS" },
+            { 6, "APARECER EN UN ANUNCIO" },
+            { 7, "RECOGEBALONES" },
+            { 8, "COMENTARISTA" },
+            { 9, "PARTICIPACIÓN EN UN PARTIDO DE CELEBRIDADES" }
+        };
+
         static void Main(string[] args)
         {
             User user = new User();
@@ -54,6 +67,9 @@ namespace ConsoleApp1
                 case PlayerActionEnum.training:
                     seleniumServices.Train(user, user.Training.Name);
                     break;
+                case PlayerActionEnum.work:
+                    seleniumServices.Job(user, user.Job.Name);
+                    break;
                 default:
                     break;
             }
@@ -69,14 +85,14 @@ namespace ConsoleApp1
 
             string data = string.Empty;
             bool state = false;
-            string[] playerActions = { "food", "training" };
+            string[] playerActions = { "food", "training", "work" };
             do
             {
                 Console.WriteLine("Seleccionar:");
                 foreach (string item in playerActions)
                     Console.WriteLine(item);
 
-                data = RequireData("Escribi bien y textual la accion");
+                data = RequireData("actividad a realizar");
                 if (playerActions.Contains(data))
                     user.PlayerAction = (PlayerActionEnum)Enum.Parse(typeof(PlayerActionEnum), data);
 
@@ -85,7 +101,7 @@ namespace ConsoleApp1
                     foreach (KeyValuePair<int, string> food in Foods)
                         Console.WriteLine("{0} - {1}", food.Key, food.Value);
 
-                    data = RequireData("Escribi bien y textual la accion");
+                    data = RequireData("opcion");
                     if (Foods.ContainsKey(int.Parse(data)))
                     {
                         user.Food.Name = Foods[int.Parse(data)];
@@ -99,16 +115,29 @@ namespace ConsoleApp1
                     foreach (KeyValuePair<int, string> training in Trainings)
                         Console.WriteLine("{0} - {1}", training.Key, training.Value);
 
-                    data = RequireData("Escribi bien y textual la accion");
+                    data = RequireData("opcion");
                     if (Trainings.ContainsKey(int.Parse(data)))
                     {
                         user.Training.Name = Trainings[int.Parse(data)];
-                        user.Training.Cost = int.Parse(RequireData("Cuantos minutos demora la actividad?"));
+                        user.Training.Cost = int.Parse(RequireData("Cuantos segundos demora la actividad?"));
                         user.Training.CostMeasure = CostMeasureEnum.seconds;
                         state = true;
                     }
                 }
-                    
+                else if (user.PlayerAction == PlayerActionEnum.work)
+                {
+                    foreach (KeyValuePair<int, string> job in Jobs)
+                        Console.WriteLine("{0} - {1}", job.Key, job.Value);
+
+                    data = RequireData("opcion");
+                    if (Jobs.ContainsKey(int.Parse(data)))
+                    {
+                        user.Job.Name = Jobs[int.Parse(data)];
+                        user.Job.CostTime = double.Parse(RequireData("minutos que demora la actividad (30s = 0,5min, 6hs = 360min) (NO USAR PUNTO PARA DECIMAL!!)"));
+                        user.Job.CostMeasure = CostMeasureEnum.min;
+                        state = true;
+                    }
+                }
             } while (!state);
         }
         static string RequireData(string label)
