@@ -53,7 +53,8 @@ namespace ConsoleApp1
         {
             User user = new User();
             Menu(user);
-            
+
+            //TODO: Crear archivo de configuracion https://aspnetcoremaster.com/asp.net/core/2019/04/07/aspnetcore-appsettings.html
             SeleniumServices seleniumServices = new SeleniumServices(@"C:\chromedriver", "https://la.footballteamgame.com/");
 
             seleniumServices.LogIn(user);

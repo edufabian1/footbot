@@ -1,0 +1,82 @@
+[
+  {
+    "Id": 2,
+    "Name": "OFENSIVA",
+    "Level": 2,
+    "Cost": 30,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  },
+  {
+    "Id": 3,
+    "Name": "DEFENSIVA",
+    "Level": 8,
+    "Cost": 60,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  },
+  {
+    "Id": 4,
+    "Name": "CREACION DE JUEGO",
+    "Level": 10,
+    "Cost": 150,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  },
+  {
+    "Id": 5,
+    "Name": "RESISTENCIA",
+    "Level": 19,
+    "Cost": 150,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  },
+  {
+    "Id": 6,
+    "Name": "LECTURA",
+    "Level": 1,
+    "Cost": 30,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  },
+  {
+    "Id": 7,
+    "Name": "PRESION",
+    "Level": 1,
+    "Cost": 30,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  },
+  {
+    "Id": 8,
+    "Name": "BALON PARADO",
+    "Level": 0,
+    "Cost": 30,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  },
+  {
+    "Id": 9,
+    "Name": "EFICACIA",
+    "Level": 0,
+    "Cost": 30,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 5,
+    "Energy": 1
+  }
+]

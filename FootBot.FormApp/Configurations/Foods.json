@@ -1,0 +1,51 @@
+[
+  {
+    "Id": 1,
+    "Name": "SMOOTHIE DE VERDURAS",
+    "Hours": 0,
+    "Minutes": 6,
+    "Seconds": 0,
+    "Energy": 2
+  },
+  {
+    "Id": 2,
+    "Name": "ROLLO DE PLATANO",
+    "Hours": 0,
+    "Minutes": 30,
+    "Seconds": 0,
+    "Energy": 8
+  },
+  {
+    "Id": 3,
+    "Name": "CARNE ASADA DE MAMA",
+    "Hours": 2,
+    "Minutes": 0,
+    "Seconds": 0,
+    "Energy": 27
+  },
+  {
+    "Id": 4,
+    "Name": "LICUADO DE PROTEINAS",
+    "Hours": 4,
+    "Minutes": 0,
+    "Seconds": 0,
+    "Energy": 48
+  },
+  {
+    "Id": 5,
+    "Name": "POLLO Y ARROZ",
+    "Hours": 6,
+    "Minutes": 0,
+    "Seconds": 0,
+    "Energy": 59
+  },
+  {
+    "Id": 6,
+    "Name": "EMPAREDADO DE MERIENDA",
+    "Hours": 12,
+    "Minutes": 0,
+    "Seconds": 0,
+    "CostType": 1,
+    "Energy": 105
+  }
+]

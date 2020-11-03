@@ -29,10 +29,10 @@ namespace ConsoleApp1
             //TODO: Validar error por demora de conexion a pagina
             Driver.Navigate().GoToUrl(Url);
 
-            IWebElement lnkLogin = Driver.FindElement(By.CssSelector("button[class='btn btn-lg openLoginModal']"));
+            IWebElement lnkLogin = Driver.FindElement(By.CssSelector("button[class='btn btn-lg']"));
             lnkLogin.Click();
 
-            IWebElement signIn = Driver.FindElement(By.Id("modal-login-tab"));
+            IWebElement signIn = Driver.FindElement(By.ClassName("modal-header-tab"));
             signIn.Click();
 
             var txtUsername = Driver.FindElement(By.CssSelector("input[type='email']"));

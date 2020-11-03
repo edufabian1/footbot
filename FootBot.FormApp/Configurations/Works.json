@@ -1,0 +1,83 @@
+[
+  {
+    "Id": 1,
+    "Name": "UTILERO",
+    "Cost": 24,
+    "Hours": 0,
+    "Minutes": 0,
+    "Seconds": 30,
+    "Prize": 4500
+  },
+  {
+    "Id": 2,
+    "Name": "MASCOTA DEL EQUIPO",
+    "Cost": 96,
+    "Hours": 0,
+    "Minutes": 2,
+    "Seconds": 30,
+    "Prize": 18900
+  },
+  {
+    "Id": 3,
+    "Name": "EXPERTOS DEL ESTUDIO",
+    "Cost": 288,
+    "Hours": 0,
+    "Minutes": 6,
+    "Seconds": 0,
+    "Prize": 59400
+  },
+  {
+    "Id": 4,
+    "Name": "AGUADOR",
+    "Cost": 12,
+    "Hours": 0,
+    "Minutes": 5,
+    "Seconds": 0,
+    "Prize": 4500
+  },
+  {
+    "Id": 5,
+    "Name": "ENTRENADOR DE LAS FUERZAS BASICAS",    
+    "Cost": 48,
+    "Hours": 0,
+    "Minutes": 30,
+    "Seconds": 0,
+    "Prize": 18000
+  },
+  {
+    "Id": 6,
+    "Name": "APARECER EN UN ANUNCIO",    
+    "Cost": 144,
+    "Hours": 1,
+    "Minutes": 30,
+    "Seconds": 0,
+    "Prize": 54000
+  },
+  {
+    "Id": 7,
+    "Name": "RECOGEBALONES",    
+    "Cost": 6,
+    "Hours": 0,
+    "Minutes": 10,
+    "Seconds": 0,
+    "Prize": 4500
+  },
+  {
+    "Id": 8,
+    "Name": "COMENTARISTA",
+    "Cost": 24,
+    "Hours": 2,
+    "Minutes": 0,
+    "Seconds": 0,
+    "Prize": 17100
+  },
+  {
+    "Id": 9,
+    "Name": "PARTICIPACION EN UN PARTIDO DE CELEBRIDADES",
+    "Cost": 72,
+    "Hours": 6,
+    "Minutes": 0,
+    "Seconds": 0,
+    "Prize": 48600
+  }
+]
