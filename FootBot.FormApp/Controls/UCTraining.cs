@@ -6,6 +6,8 @@ using FootBot.Models.Models;
 using System.Configuration;
 using FootBot.Selenium;
 using System.Linq;
+using System;
+using System.Drawing;
 
 namespace FootBot.FormApp.Controls
 {
@@ -14,6 +16,7 @@ namespace FootBot.FormApp.Controls
         private List<Training> _trainings;
         private User _user;
 
+        #region SingletonPattern
         private static UCTraining _instance;
 
         public static UCTraining GetInstance()
@@ -22,6 +25,7 @@ namespace FootBot.FormApp.Controls
                 _instance = new UCTraining();
             return _instance;
         }
+        #endregion
 
         private UCTraining()
         {
@@ -30,6 +34,7 @@ namespace FootBot.FormApp.Controls
 
             LoadFoodInForm();
 
+            pgbTrainings.Visible = 
             nudCost.Controls[0].Visible = nudEnergy.Controls[0].Visible = nudSeconds.Controls[0].Visible =
                 nudMinutes.Controls[0].Visible = nudHours.Controls[0].Visible = nudCount.Controls[0].Visible = false;
 
@@ -69,47 +74,38 @@ namespace FootBot.FormApp.Controls
             lstTrainings.ValueMember = "Id";
         }
 
+        public void CheckColors(Color color1, Color color2, Color color3)
+        {
+            MessageBox.Show("Chequeando training");
+        }
+
         #endregion
 
         #region Events
 
-        private void lstTrainings_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void lstTrainings_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadFoodInForm();
         }
 
-        private void btnInitTrain_Click(object sender, System.EventArgs e)
+        private void btnInitTrain_Click(object sender, EventArgs e)
         {
             _user.Count = int.Parse(nudCount.Value.ToString());
             _user.Training = (Training) lstTrainings.SelectedItem;
-
+            
             if (!backgroundWorkerTrain.IsBusy)
+            {
+                pgbTrainings.Visible = true;
                 backgroundWorkerTrain.RunWorkerAsync();
+            }
+                
             else
                 MessageBox.Show("Por favor, deja de explotarme, ya estoy entrenando...");
+
+            btnInitTrain.Enabled = false;
         }
 
-        #endregion
-
-        private void backgroundWorkerTrain_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            try
-            {
-                SeleniumServices seleniumServices = new SeleniumServices(Application.StartupPath, "https://la.footballteamgame.com/");
-
-                seleniumServices.LogIn(_user);
-
-                seleniumServices.Train(_user, _user.Training);
-
-                seleniumServices.LogOut(false);
-            }
-            catch (System.Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void btnActualizar_Click(object sender, System.EventArgs e)
+        private void btnActualizar_Click(object sender, EventArgs e)
         {
             Training training = (Training)lstTrainings.SelectedItem;
 
@@ -127,5 +123,52 @@ namespace FootBot.FormApp.Controls
             string path = Path.Combine(paths);
             File.WriteAllText(path, json);
         }
+
+        #endregion
+
+        #region BackgroundWorker
+
+        private void backgroundWorkerTrain_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            int countProgress = 0;
+            SeleniumServices seleniumServices = new SeleniumServices(Application.StartupPath, "https://la.footballteamgame.com/", int.Parse(ConfigurationManager.AppSettings["navigatorId"]));
+            try
+            {
+                seleniumServices.LogIn(_user);
+
+                var resultIndex = seleniumServices.NavigateToUrl(_user.Training, "training");
+
+                while (countProgress < _user.Count)
+                {
+                    backgroundWorkerTrain.ReportProgress(++countProgress * 100 / _user.Count);
+                    seleniumServices.doOneActivity(_user.Training, resultIndex, "btn btn-primary tile-box__btn pulse-in-tutorial");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                seleniumServices.LogOut(true);
+            }
+        }
+
+        private void backgroundWorkerTrain_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            if (!e.Cancelled)
+                MessageBox.Show("Entrenamiento finalizado, sex appeal +1.");
+            btnInitTrain.Enabled = true;            
+            pgbTrainings.Value = 0;
+            pgbTrainings.Visible = false;
+        }
+
+        private void backgroundWorkerTrain_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            pgbTrainings.Value = e.ProgressPercentage;
+            pgbTrainings.Update();
+        }
+
+        #endregion
     }
 }

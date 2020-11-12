@@ -1,11 +1,14 @@
 ﻿using FootBot.Models.Models;
 using FootBot.Selenium;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using System.Drawing;
 
 namespace FootBot.FormApp.Controls
 {
@@ -13,15 +16,17 @@ namespace FootBot.FormApp.Controls
     {
         private List<Food> _product;
         private User _user;
-        
+
+        #region SingletonPattern
         private static UCFood _instance;
 
         public static UCFood GetInstance()
         {
             if (_instance == null)
-                _instance = new UCFood();            
+                _instance = new UCFood();
             return _instance;
         }
+        #endregion
 
         private UCFood()
         {
@@ -30,6 +35,7 @@ namespace FootBot.FormApp.Controls
 
             LoadFoodInForm();
 
+            pgbFoods.Visible =
             nudEnergy.Controls[0].Visible = nudSeconds.Controls[0].Visible = 
                 nudMinutes.Controls[0].Visible = nudHours.Controls[0].Visible = nudCount.Controls[0].Visible = false;
 
@@ -42,20 +48,49 @@ namespace FootBot.FormApp.Controls
 
         #region Events
 
-        private void btnInitTrain_Click(object sender, System.EventArgs e)
+        private void btnInitEat_Click(object sender, EventArgs e)
         {
             _user.Count = int.Parse(nudCount.Value.ToString());
-            _user.Food = (Food)lstFoods.SelectedItem;
+            _user.Food = (Food) lstFoods.SelectedItem;
 
             if (!backgroundWorkerFood.IsBusy)
+            {
+                pgbFoods.Visible = true;
                 backgroundWorkerFood.RunWorkerAsync();
+            }
+
             else
                 MessageBox.Show("Por favor, deja de engordarme, ya estoy comiendo...");
+
+            btnInitEat.Enabled = false;
         }
 
-        private void lstTrainings_SelectedIndexChanged(object sender, System.EventArgs e)
+        private void lstTrainings_SelectedIndexChanged(object sender, EventArgs e)
         {
             LoadFoodInForm();
+        }
+
+        private void btnActualizar_Click(object sender, EventArgs e)
+        {
+            Food product = (Food)lstFoods.SelectedItem;
+
+            _product.Where(item => item.Id == product.Id).ToList().ForEach(s => {
+                s.Energy = int.Parse(nudEnergy.Value.ToString());
+                s.Hours = int.Parse(nudHours.Value.ToString());
+                s.Minutes = int.Parse(nudMinutes.Value.ToString());
+                s.Seconds = int.Parse(nudSeconds.Value.ToString());
+            });
+
+            string json = JsonConvert.SerializeObject(_product);
+
+            string[] paths = { Application.StartupPath, "Configurations", "Foods.json" };
+            string path = Path.Combine(paths);
+            File.WriteAllText(path, json);
+        }
+
+        public void CheckColors(Color color1, Color color2, Color color3)
+        {
+            MessageBox.Show("Chequeando food");
         }
 
         #endregion
@@ -89,40 +124,49 @@ namespace FootBot.FormApp.Controls
 
         #endregion
 
-        private void backgroundWorkerFood_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        #region BackgroundWorker
+
+        private void backgroundWorkerFood_DoWork(object sender, DoWorkEventArgs e)
         {
+            int countProgress = 0;
+            SeleniumServices seleniumServices = new SeleniumServices(Application.StartupPath, "https://la.footballteamgame.com/", int.Parse(ConfigurationManager.AppSettings["navigatorId"]));
             try
             {
-                SeleniumServices seleniumServices = new SeleniumServices(Application.StartupPath, "https://la.footballteamgame.com/");
-
                 seleniumServices.LogIn(_user);
 
-                seleniumServices.Eat(_user, _user.Food);
+                var resultIndex = seleniumServices.NavigateToUrl(_user.Food, "food");
 
-                seleniumServices.LogOut(false);
+                while (countProgress < _user.Count)
+                {
+                    backgroundWorkerFood.ReportProgress(++countProgress * 100 / _user.Count);
+                    seleniumServices.doOneActivity(_user.Food, resultIndex, "btn btn-lg btn-primary");
+                }
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
+            finally
+            {
+                seleniumServices.LogOut(true);
+            }
         }
 
-        private void btnActualizar_Click(object sender, System.EventArgs e)
+        private void backgroundWorkerFood_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            Food product = (Food)lstFoods.SelectedItem;
-            
-            _product.Where(item => item.Id == product.Id).ToList().ForEach(s => {
-                s.Energy = int.Parse(nudEnergy.Value.ToString());
-                s.Hours = int.Parse(nudHours.Value.ToString());
-                s.Minutes = int.Parse(nudMinutes.Value.ToString());
-                s.Seconds = int.Parse(nudSeconds.Value.ToString());
-            });
-
-            string json = JsonConvert.SerializeObject(_product);
-            
-            string[] paths = { Application.StartupPath, "Configurations", "Foods.json" };
-            string path = Path.Combine(paths);
-            File.WriteAllText(path, json);
+            if (!e.Cancelled)
+                MessageBox.Show("Terminé de comer, ya estoy gordo.");
+            btnInitEat.Enabled = true;            
+            pgbFoods.Value = 0;
+            pgbFoods.Visible = false;
         }
+
+        private void backgroundWorkerFood_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            pgbFoods.Value = e.ProgressPercentage;
+            pgbFoods.Update();
+        }
+
+        #endregion
     }
 }

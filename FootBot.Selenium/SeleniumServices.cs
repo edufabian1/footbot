@@ -3,6 +3,7 @@ using FootBot.Models.Enums;
 using FootBot.Models.Models;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,24 +17,47 @@ namespace FootBot.Selenium
         private IWebDriver _driver;
         private string _url;
 
-        public SeleniumServices(string chromeDriverDirectory, string url)
+        public SeleniumServices(string pathDriverDirectory, string url, int navigatorDriver)
         {
             _url = url;
 
-            var chromeDriverService = ChromeDriverService.CreateDefaultService(chromeDriverDirectory);
-            chromeDriverService.HideCommandPromptWindow = true;
+            if (navigatorDriver == NavigatorDriverEnum.Chrome.GetHashCode())
+            {
+                var driverService = ChromeDriverService.CreateDefaultService(pathDriverDirectory);
+                driverService.HideCommandPromptWindow = true;
 
-            ChromeOptions options = new ChromeOptions();
-            options.AddArguments(new[] { "--no-sandbox", 
-                                        "--disable-dev-shm-usage", 
-                                        "--disable-images", 
-                                        "--disable-notifications", 
-                                        "use-fake-device-for-media-stream", 
+                ChromeOptions options = new ChromeOptions();
+                //options.AddArguments(new List<string>() {
+                //                            "--silent-launch",
+                //                            "--no-startup-window",
+                //                            "no-sandbox",
+                //                            "headless",});
+                options.AddArguments(new[] { "--no-sandbox",
+                                        "--disable-dev-shm-usage",
+                                        "--disable-images",
+                                        "--disable-notifications",
+                                        "use-fake-device-for-media-stream",
                                         "use-fake-ui-for-media-stream" });
-            options.AddArgument(@"--user-agent=""Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36""");
-            
-            _driver = new ChromeDriver(chromeDriverService, options);
+                options.AddArgument(@"--user-agent=""Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.157 Safari/537.36""");
 
+                _driver = new ChromeDriver(driverService, options);                
+            }
+            else if (navigatorDriver == NavigatorDriverEnum.Firefox.GetHashCode())
+            {
+                var driverService = FirefoxDriverService.CreateDefaultService(pathDriverDirectory);
+                driverService.HideCommandPromptWindow = true;
+
+                FirefoxOptions options = new FirefoxOptions();
+
+                options.AddArguments(new List<string>() {
+                                            "--silent-launch",
+                                            "--no-startup-window",
+                                            "no-sandbox",
+                                            "--headless",});
+                _driver = new FirefoxDriver(driverService, options);
+            }
+
+            _driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(45);
         }
 
         public void LogIn(User user)
@@ -78,40 +102,6 @@ namespace FootBot.Selenium
 
         }
 
-        public void ProcessEatAndTrain(User user)
-        {
-            switch (user.PlayerAction)
-            {
-                case PlayerActionEnum.food:
-                    do
-                    {
-                        _driver.Navigate().GoToUrl(_url + user.PlayerAction.ToString());
-                        Thread.Sleep(5000);
-                        IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
-                        js.ExecuteScript("document.getElementsByClassName('btn btn-lg btn-primary')[0].click()");
-
-                        Thread.Sleep(1000 * 60 * 7);
-                        _driver.Navigate().Refresh();
-                        user.Count -= 1;
-                    } while (user.Count != 0);
-                    break;
-                case PlayerActionEnum.training:
-                    do
-                    {
-                        //Los entrenamientos tienen un refresh menor de 15 por lo que no es necesario actualizar pagina y se puede reducir tiempo de sleep ya que se encadenan en loop
-                        _driver.Navigate().GoToUrl(_url + user.PlayerAction.ToString());
-                        Thread.Sleep(3000);
-                        IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
-                        js.ExecuteScript("document.getElementsByClassName('btn btn-primary tile-box__btn pulse-in-tutorial')[3].click()");
-                        Thread.Sleep(1000 * 10);
-                        user.Count -= 1;
-                    } while (user.Count != 0);
-                    break;
-                default:
-                    break;
-            }
-        }
-
         //TODO: Accion de comer por bot https://la.footballteamgame.com/training
         public void Train(User user, Training training)
         {
@@ -133,7 +123,7 @@ namespace FootBot.Selenium
 
                 while (user.Count != 0)
                 {
-                    Thread.Sleep(3000);
+                    Thread.Sleep(5000);
 
                     IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
                     js.ExecuteScript($"document.getElementsByClassName('btn btn-primary tile-box__btn pulse-in-tutorial')[{index}].click()");
@@ -146,7 +136,7 @@ namespace FootBot.Selenium
             }
             catch (Exception ex)
             {
-                throw new Exception("Eat Error: " + ex.Message + " in loop: " + user.Count);
+                throw new Exception("Train Error: " + ex.Message + " in loop: " + user.Count);
             }
         }
 
@@ -221,7 +211,51 @@ namespace FootBot.Selenium
             }
             catch (Exception ex)
             {
-                throw new Exception("Eat Error: " + ex.Message + " in loop: " + user.Count);                
+                throw new Exception("Work Error: " + ex.Message + " in loop: " + user.Count);
+            }
+        }
+
+        public int NavigateToUrl(IActivity activity, string urlActivity)
+        {
+            int index = -1;
+            try
+            {
+                List<string> activities = new List<string>();
+
+                _driver.Navigate().GoToUrl(_url + urlActivity);
+                Thread.Sleep(5000);
+
+                ReadOnlyCollection<IWebElement> elements = _driver.FindElements(By.ClassName("tile-box--header"));
+
+                foreach (var element in elements)
+                {
+                    if (!element.Text.Equals(string.Empty))
+                        activities.Add(element.Text);
+                }
+                index = activities.FindIndex(element => string.Compare(element.ToUpper(), activity.Name, CultureInfo.CurrentCulture, CompareOptions.IgnoreNonSpace) == 0);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(activity.Name + "error redirecting to url: " + ex.Message);
+            }
+            return index;
+        }
+
+        public void doOneActivity(IActivity activity, int indexActivity, string classNameButton)
+        {
+            try
+            {
+                Thread.Sleep(5000);
+
+                IJavaScriptExecutor js = (IJavaScriptExecutor)_driver;
+                js.ExecuteScript($"document.getElementsByClassName('{classNameButton}')[{indexActivity}].click()");
+
+                Thread.Sleep(1000 * activity.getCostISeconds());
+                _driver.Navigate().Refresh();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(activity.Name + "error executing click: " + ex.Message);
             }
         }
     }

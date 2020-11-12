@@ -4,7 +4,7 @@ using System.Security.Permissions;
 
 namespace FootBot.Models.Models
 {
-    public class Food
+    public class Food : IActivity
     {
         public int Id { get; set; }
         public string Name { get; set; }                

@@ -41,10 +41,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\NavigatorDriverEnum.cs" />
     <Compile Include="Enums\PlayerActionEnum.cs" />
     <Compile Include="CostTypeEnum.cs" />
+    <Compile Include="IActivity.cs" />
     <Compile Include="Models\Food.cs" />
-    <Compile Include="Models\Job.cs" />
     <Compile Include="Models\Work.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Training.cs" />

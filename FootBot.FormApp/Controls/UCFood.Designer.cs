@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnInitTrain = new System.Windows.Forms.Button();
+            this.btnInitEat = new System.Windows.Forms.Button();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
@@ -49,6 +49,7 @@
             this.nudEnergy = new System.Windows.Forms.NumericUpDown();
             this.backgroundWorkerFood = new System.ComponentModel.BackgroundWorker();
             this.btnActualizar = new System.Windows.Forms.Button();
+            this.pgbFoods = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.nudSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinutes)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHours)).BeginInit();
@@ -58,21 +59,21 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudEnergy)).BeginInit();
             this.SuspendLayout();
             // 
-            // btnInitTrain
+            // btnInitEat
             // 
-            this.btnInitTrain.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(153)))), ((int)(((byte)(69)))));
-            this.btnInitTrain.FlatAppearance.BorderSize = 0;
-            this.btnInitTrain.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(198)))), ((int)(((byte)(132)))));
-            this.btnInitTrain.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnInitTrain.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
-            this.btnInitTrain.ForeColor = System.Drawing.SystemColors.ControlLight;
-            this.btnInitTrain.Location = new System.Drawing.Point(147, 288);
-            this.btnInitTrain.Name = "btnInitTrain";
-            this.btnInitTrain.Size = new System.Drawing.Size(156, 33);
-            this.btnInitTrain.TabIndex = 27;
-            this.btnInitTrain.Text = "Iniciar";
-            this.btnInitTrain.UseVisualStyleBackColor = true;
-            this.btnInitTrain.Click += new System.EventHandler(this.btnInitTrain_Click);
+            this.btnInitEat.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(153)))), ((int)(((byte)(69)))));
+            this.btnInitEat.FlatAppearance.BorderSize = 0;
+            this.btnInitEat.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(99)))), ((int)(((byte)(198)))), ((int)(((byte)(132)))));
+            this.btnInitEat.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnInitEat.Font = new System.Drawing.Font("Nirmala UI", 9.75F, System.Drawing.FontStyle.Bold);
+            this.btnInitEat.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.btnInitEat.Location = new System.Drawing.Point(147, 288);
+            this.btnInitEat.Name = "btnInitEat";
+            this.btnInitEat.Size = new System.Drawing.Size(156, 33);
+            this.btnInitEat.TabIndex = 27;
+            this.btnInitEat.Text = "Iniciar";
+            this.btnInitEat.UseVisualStyleBackColor = true;
+            this.btnInitEat.Click += new System.EventHandler(this.btnInitEat_Click);
             // 
             // label6
             // 
@@ -299,7 +300,10 @@
             // 
             // backgroundWorkerFood
             // 
+            this.backgroundWorkerFood.WorkerReportsProgress = true;
             this.backgroundWorkerFood.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerFood_DoWork);
+            this.backgroundWorkerFood.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerFood_ProgressChanged);
+            this.backgroundWorkerFood.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerFood_RunWorkerCompleted);
             // 
             // btnActualizar
             // 
@@ -317,14 +321,22 @@
             this.btnActualizar.UseVisualStyleBackColor = true;
             this.btnActualizar.Click += new System.EventHandler(this.btnActualizar_Click);
             // 
+            // pgbFoods
+            // 
+            this.pgbFoods.Location = new System.Drawing.Point(429, 417);
+            this.pgbFoods.Name = "pgbFoods";
+            this.pgbFoods.Size = new System.Drawing.Size(219, 14);
+            this.pgbFoods.TabIndex = 49;
+            // 
             // UCFood
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
+            this.Controls.Add(this.pgbFoods);
             this.Controls.Add(this.btnActualizar);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblEnergy);
-            this.Controls.Add(this.btnInitTrain);
+            this.Controls.Add(this.btnInitEat);
             this.Controls.Add(this.nudEnergy);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -355,7 +367,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button btnInitTrain;
+        private System.Windows.Forms.Button btnInitEat;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label4;
@@ -376,5 +388,6 @@
         private System.Windows.Forms.NumericUpDown nudEnergy;
         private System.ComponentModel.BackgroundWorker backgroundWorkerFood;
         private System.Windows.Forms.Button btnActualizar;
+        private System.Windows.Forms.ProgressBar pgbFoods;
     }
 }

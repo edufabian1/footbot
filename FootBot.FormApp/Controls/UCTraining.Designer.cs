@@ -52,6 +52,7 @@
             this.nudCost = new System.Windows.Forms.NumericUpDown();
             this.backgroundWorkerTrain = new System.ComponentModel.BackgroundWorker();
             this.btnActualizar = new System.Windows.Forms.Button();
+            this.pgbTrainings = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.nudEnergy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinutes)).BeginInit();
@@ -340,7 +341,10 @@
             // 
             // backgroundWorkerTrain
             // 
+            this.backgroundWorkerTrain.WorkerReportsProgress = true;
             this.backgroundWorkerTrain.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerTrain_DoWork);
+            this.backgroundWorkerTrain.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerTrain_ProgressChanged);
+            this.backgroundWorkerTrain.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerTrain_RunWorkerCompleted);
             // 
             // btnActualizar
             // 
@@ -358,10 +362,18 @@
             this.btnActualizar.UseVisualStyleBackColor = true;
             this.btnActualizar.Click += new System.EventHandler(this.btnActualizar_Click);
             // 
+            // pgbTrainings
+            // 
+            this.pgbTrainings.Location = new System.Drawing.Point(429, 417);
+            this.pgbTrainings.Name = "pgbTrainings";
+            this.pgbTrainings.Size = new System.Drawing.Size(219, 14);
+            this.pgbTrainings.TabIndex = 48;
+            // 
             // UCTraining
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
+            this.Controls.Add(this.pgbTrainings);
             this.Controls.Add(this.btnActualizar);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.label7);
@@ -424,5 +436,6 @@
         private System.Windows.Forms.NumericUpDown nudCost;
         private System.ComponentModel.BackgroundWorker backgroundWorkerTrain;
         private System.Windows.Forms.Button btnActualizar;
+        private System.Windows.Forms.ProgressBar pgbTrainings;
     }
 }

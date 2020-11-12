@@ -52,6 +52,7 @@
             this.nudPrize = new System.Windows.Forms.NumericUpDown();
             this.backgroundWorkerWork = new System.ComponentModel.BackgroundWorker();
             this.btnActualizar = new System.Windows.Forms.Button();
+            this.pgbWorks = new System.Windows.Forms.ProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.nudEnergy)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudSeconds)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMinutes)).BeginInit();
@@ -283,7 +284,7 @@
             // 
             // panel4
             // 
-            this.panel4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(89)))), ((int)(((byte)(179)))));
+            this.panel4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(126)))), ((int)(((byte)(249)))));
             this.panel4.Controls.Add(this.label1);
             this.panel4.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel4.Location = new System.Drawing.Point(0, 0);
@@ -340,7 +341,10 @@
             // 
             // backgroundWorkerWork
             // 
+            this.backgroundWorkerWork.WorkerReportsProgress = true;
             this.backgroundWorkerWork.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorkerWork_DoWork);
+            this.backgroundWorkerWork.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorkerWork_ProgressChanged);
+            this.backgroundWorkerWork.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorkerWork_RunWorkerCompleted);
             // 
             // btnActualizar
             // 
@@ -358,10 +362,18 @@
             this.btnActualizar.UseVisualStyleBackColor = true;
             this.btnActualizar.Click += new System.EventHandler(this.btnActualizar_Click);
             // 
+            // pgbWorks
+            // 
+            this.pgbWorks.Location = new System.Drawing.Point(429, 417);
+            this.pgbWorks.Name = "pgbWorks";
+            this.pgbWorks.Size = new System.Drawing.Size(219, 14);
+            this.pgbWorks.TabIndex = 45;
+            // 
             // UCWork
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(51)))), ((int)(((byte)(73)))));
+            this.Controls.Add(this.pgbWorks);
             this.Controls.Add(this.btnActualizar);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.label7);
@@ -424,5 +436,6 @@
         private System.Windows.Forms.NumericUpDown nudPrize;
         private System.ComponentModel.BackgroundWorker backgroundWorkerWork;
         private System.Windows.Forms.Button btnActualizar;
+        private System.Windows.Forms.ProgressBar pgbWorks;
     }
 }

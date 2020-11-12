@@ -2,7 +2,7 @@
 
 namespace FootBot.Models.Models
 {
-    public class Training
+    public class Training : IActivity
     {
         public int Id { get; set; }
         public string Name { get; set; }
