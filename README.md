@@ -1,7 +1,10 @@
 # footbot
 
-#Objetivo
+#### Objetivo
+#
 Bot creado para scrapear pagina de futbol fantasy
-
-#Tecnologias
+#
+#
+#### Tecnologias
+#
 C# - Selenium - Winform - NET
