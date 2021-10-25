@@ -1,75 +1,34 @@
-<h1 align="center"><project-name></h1>
 
-<p align="center"><project-description></p>
+# Footbot
 
-## Links
+Bot para scrapear pagina de futbol fantasia y automatizar tareas que se realizan
+de manera manual, permitiendo al usuario a partir de previas configuraciones, realizar
+las acciones sin necesidad de estar pendiente del tiempo de espera que requiere cada
+actividad.
 
-- [Repo](https://github.com/Rohit19060/<project-name> "<project-name> Repo")
 
-- [Live](<Homepage url> "Live View")
+## Tech Stack
 
-- [Bugs](https://github.com/Rohit19060/<project-name>/issues "Issues Page")
+**Backend:** C#vs, Net Core 3.1, ConsoleApp, WinForm
 
-- [API](<API Link> "API")
+**Automation:** Selenium
 
-## Screenshots
+***Links*** https://www.selenium.dev/documentation/webdriver/
+  
+## Environment Variables
 
-![Home Page](/screenshots/1.png "Home Page")
+To run this project, you will need to add the following environment variables to your app.config file
 
-![](/screenshots/2.png)
+`user`
 
-![](/screenshots/3.png)
+`password`
 
-## Available Commands
+`navigatorId`
 
-In the project directory, you can run:
+Navegador con el cual va a correrse
 
-### `npm start" : "react-scripts start"`,
+1 - chrome
 
-The app is built using `create-react-app` so this command Runs the app in Development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser. You also need to run the server file as well to completely run the app. The page will reload if you make edits.
-You will also see any lint errors in the console.
+2 - firefox
 
-### `"npm run build": "react-scripts build"`,
-
-Builds the app for production to the `build` folder. It correctly bundles React in production mode and optimizes the build for the best performance. The build is minified and the filenames include the hashes. Your app will be ready to deploy!
-
-### `"npm run test": "react-scripts test"`,
-
-Launches the test runner in the interactive watch mode.
-
-### `"npm run dev": "concurrently "nodemon server" "npm run start"`,
-
-For running the server and app together I am using concurrently this helps a lot in the MERN application as it runs both the server (client and server) concurrently. So you can work on them both together.
-
-### `"serve": "node server"`
-
-For running the server file on you can use this command.
-
-### `npm run serve`
-
-## Built With
-
-- JavaScript
-- Node
-- NPM
-- Webpack
-- HTML
-- CSS
-
-## Future Updates
-
-- [ ] Reliable Storage
-
-## Author
-
-**Rohit Jain**
-
-- [Profile](https://github.com/rohit19060 "Rohit jain")
-- [Email](mailto:rohitjain19060@gmail.com?subject=Hi "Hi!")
-- [Website](https://kingtechnologies.in "Welcome")
-
-## 🤝 Support
-
-Contributions, issues, and feature requests are welcome!
-
-Give a ⭐️ if you like this project!
+  
